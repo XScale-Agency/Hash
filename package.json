@@ -86,6 +86,9 @@
     }
   },
   "prettier": "@adonisjs/prettier-config",
+  "eslintConfig": {
+    "extends": "@adonisjs/eslint-config/package"
+  },
   "tsup": {
     "entry": [
       "./index.ts"

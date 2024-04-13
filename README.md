@@ -1,65 +1,67 @@
-# PHC Formatter
+# Hash
 
-PHC Formatter serializes and deserializes PHC strings.
+Multi driver hashing module following PHC string format
 
-## Install
-
-```bash
-yarn add @xscale/phc-formatter
-```
+It has first-class support for bcrypt, scrypt, and argon2 hashing algorithms and the ability to add custom drivers.
 
 ## Usage
 
+The hash.make method accepts a plain string value (the user password input) and returns a hash output.
+
 ```ts
-import * as PHCFormatter from '../index.js'
+import { Hash, Scrypt } from '@xscale/hash'
 
-const serialized = PHCFormatter.serialize({
-  id: 'pbkdf2-sha256',
-  salt: Buffer.from('0ZrzXitFSGltTQnBWOsdAw', 'base64'),
-  hash: Buffer.from('Y11AchqV4b0sUisdZd0Xr97KWoymNE0LNNrnEgY4H9M', 'base64'),
-  version: 1,
-  parameters: {
-    i: 1000,
-    m: 1024,
-    p: 8,
-  },
-})
+const hash = new Hash(new Scrypt())
 
-console.log(serialized)
+const hashed = await hash.make('user_password')
 
-// $pbkdf2-sha256$v=1$i=1000,m=1024,p=8$Y11AchqV4b0sUisdZd0Xr97KWoymNE0LNNrnEgY4H9M$0ZrzXitFSGltTQnBWOsdAw
-
-const parsed = PHCFormatter.deserialize(serialized)
-
-console.log(parsed)
-
-// {
-//   id: 'pbkdf2-sha256',
-//   hash: <Buffer 63 5d 40 72 1a 95 e1 bd 2c 52 2b 1d 65 dd 17 af de ca 5a 8c a6 34 4d 0b 34 da e7 12 06 38 1f d3>,
-//   salt: <Buffer d1 9a f3 5e 2b 45 48 69 6d 4d 09 c1 58 eb 1d 03>,
-//   version: 1,
-//   parameters: { i: 1000, m: 1024, p: 8 }
-// }
+// $scrypt$n=16384,r=8,p=1$awRyvKyosNsLRGqXQnKs1w$ePrdivX50POaYJ18x5r1+fU7Bfc232KFeqku3U/vZVD62JQycLuAVRdlLkM/lkdQQFS+CT6j32422lm58BRB1A
 ```
 
-## API
+You cannot convert a hash value to plain text, hashing is a one-way process, and there is no way to retrieve the original value after a hash has been generated.
 
-### `serialize(phc: PHC): string`
-
-Serializes a PHC object into a PHC string.
-
-### `deserialize(phc: string): PHC`
-
-Deserializes a PHC string into a PHC object.
-
-### `PHC`
+However, hashing provides a way to verify if a given plain text value matches against an existing hash, and you can perform this check using the hash.verify method.
 
 ```ts
-type PhcNode = {
-  id: string
-  hash: Uint8Array
-  salt: Uint8Array
-  version?: number
-  parameters?: Record<string, number>
+if (await hash.verify(hashed, 'user_password')) {
+  // Password is correct
+} else {
+  // Password is incorrect
 }
 ```
+
+---
+
+## Configuration
+
+You can configure the hash driver by passing an object to the constructor.
+
+```ts
+import { Hash, Scrypt, Argon, Bcrypt } from '@xscale/hash'
+
+const scryptHash = new Hash(new Scrypt({
+    cost: 16384,
+    blockSize: 8,
+    parallelization: 1,
+    saltSize: 16,
+    maxMemory: 33554432,
+    keyLength: 64
+}))
+
+const argonHash = new Hash(new Argon({
+    version: 0x13, // hex code for 19
+    variant: 'id',
+    iterations: 3,
+    memory: 65536,
+    parallelism: 4,
+    saltSize: 16,
+    hashLength: 32,
+}))
+
+const bcryptHash = new Hash(new Bcrypt({
+    rounds: 10,
+    saltSize: 16,
+    version: '2b'
+}))
+```
+
