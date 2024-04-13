@@ -1,0 +1,100 @@
+{
+  "name": "@xscale/hash",
+  "description": "Framework agnostic Password hashing package with support for PHC string format",
+  "version": "1.0.0",
+  "main": "build/index.js",
+  "type": "module",
+  "author": "xscale, mohitxskull",
+  "license": "MIT",
+  "keywords": [
+    "hash",
+    "password",
+    "phc",
+    "bcrypt",
+    "argon2",
+    "scrypt",
+    "pbkdf2"
+  ],
+  "publishConfig": {
+    "access": "public",
+    "tag": "latest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/XScale-Agency/Hash.git"
+  },
+  "files": [
+    "build"
+  ],
+  "scripts": {
+    "pretest": "yarn lint",
+    "clean": "del-cli build",
+    "type-check": "tsc --noEmit",
+    "precompile": "yarn lint && yarn clean",
+    "compile": "tsup-node && tsc --emitDeclarationOnly --declaration",
+    "build": "yarn compile",
+    "version": "yarn build",
+    "format": "prettier --write .",
+    "prepublishOnly": "yarn build",
+    "lint": "xo",
+    "test": "npx tsx bin/test.ts"
+  },
+  "devDependencies": {
+    "@adonisjs/prettier-config": "^1.3.0",
+    "@japa/assert": "^3.0.0",
+    "@japa/expect-type": "^2.0.2",
+    "@japa/runner": "^3.1.2",
+    "@types/bcrypt": "^5.0.2",
+    "@types/node": "^20.12.6",
+    "argon2": "^0.40.1",
+    "bcrypt": "^5.1.1",
+    "del-cli": "^5.1.0",
+    "eslint": "^9.0.0",
+    "prettier": "^3.2.5",
+    "tsup": "^8.0.2",
+    "typescript": "^5.4.4",
+    "xo": "^0.58.0"
+  },
+  "dependencies": {
+    "@xscale/phc-formatter": "^1.2.0"
+  },
+  "engines": {
+    "node": ">=20.6.0"
+  },
+  "xo": {
+    "prettier": true,
+    "space": true,
+    "rules": {
+      "n/prefer-global/process": [
+        0
+      ],
+      "no-bitwise": [
+        0
+      ]
+    }
+  },
+  "peerDependencies": {
+    "argon2": "^0.31.2 || ^0.40.0",
+    "bcrypt": "^5.1.1"
+  },
+  "peerDependenciesMeta": {
+    "argon2": {
+      "optional": true
+    },
+    "bcrypt": {
+      "optional": true
+    }
+  },
+  "prettier": "@adonisjs/prettier-config",
+  "tsup": {
+    "entry": [
+      "./index.ts"
+    ],
+    "outDir": "./build",
+    "clean": true,
+    "format": "esm",
+    "dts": false,
+    "sourcemap": true,
+    "target": "esnext"
+  }
+}
