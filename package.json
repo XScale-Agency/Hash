@@ -1,6 +1,6 @@
 {
   "name": "@xscale/hash",
-  "description": "Framework agnostic Password hashing package with support for PHC string format",
+  "description": "Platform-agnostic multi-driver hashing module that adheres to the PHC string format.",
   "version": "1.0.1",
   "main": "build/index.js",
   "type": "module",
