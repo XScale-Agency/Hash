@@ -344,3 +344,7 @@ const hash = new Hash(new Pbkdf2Driver({
   // Your config
 }))
 ```
+
+## Vulnerability Reporting
+
+If you discover a security vulnerability within this package, please report it to [Github Security](https://github.com/XScale-Agency/Hash/security)
